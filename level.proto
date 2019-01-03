@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package errors;
+
+// Level.
+enum Level {
+    // Debug level have error caller and print stack trace.
+    Debug = 0;
+    // Normal level have no error caller and stack trace.
+    Normal = 1;
+    // Warn level have error caller no stack trace.
+    Warn = 2;
+    // Error level have error caller and stack trace.
+    Error = 3;
+    // Panic level have error caller and print stack trace, then panic error.
+    Panic = 4;
+    // Fatal level have error caller and no stack trace, then calls panic and os.Exit(1).
+    Fatal = 5;
+}
