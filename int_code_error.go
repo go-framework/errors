@@ -63,7 +63,7 @@ func (m *IntCodeError) Error() string {
 	buffer := strings.Builder{}
 
 	buffer.WriteString("level:")
-	buffer.WriteString(strconv.FormatInt(int64(m.Level), 10))
+	buffer.WriteString(m.Level.String())
 
 	buffer.WriteString(" code:")
 	buffer.WriteString(strconv.FormatInt(m.Code, 10))
@@ -130,11 +130,14 @@ func (m *IntCodeError) New(err interface{}, opts ...Option) error {
 		m.Caller = m.Level.GetCaller(4, 64)
 	}
 
+	// trace with level.
+	m.Level.Trace(m)
+
 	return m
 }
 
 // New error with code detail and options.
-// Code can be Message, error, int type.
+// Code can be Error, Message, int type.
 func (m *IntCodeError) NewCode(code interface{}, detail string, opts ...Option) error {
 
 	if c, ok := code.(Error); ok {
@@ -161,6 +164,9 @@ func (m *IntCodeError) NewCode(code interface{}, detail string, opts ...Option) 
 		m.Caller = m.Level.GetCaller(4, 64)
 	}
 
+	// trace with level.
+	m.Level.Trace(m)
+
 	return m
 }
 
@@ -182,6 +188,9 @@ func (m *IntCodeError) NewError(code interface{}, message string, detail string,
 	if m.Caller == nil {
 		m.Caller = m.Level.GetCaller(4, 64)
 	}
+
+	// trace with level.
+	m.Level.Trace(m)
 
 	return m
 }

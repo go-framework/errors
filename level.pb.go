@@ -34,7 +34,7 @@ const (
 	Level_Error Level = 3
 	// Panic level have error caller and print stack trace, then panic error.
 	Level_Panic Level = 4
-	// Fatal level have error caller and no stack trace, then calls panic and os.Exit(1).
+	// Fatal level have error caller and no stack trace, then calls os.Exit(1).
 	Level_Fatal Level = 5
 )
 

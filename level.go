@@ -4,7 +4,8 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"os"
+
+	"github.com/go-framework/log"
 )
 
 // CapitalString returns an all-caps ASCII representation of the log level.
@@ -86,28 +87,30 @@ func (x *Level) Get() interface{} {
 // NormalLevel have no error caller and stack trace.
 // WarnLevel have error caller no stack trace.
 // PanicLevel have error caller and print stack trace, then panic error.
-// FatalLevel have error caller and no stack trace, then calls panic and os.Exit(1).
-func (x Level) GetCaller(skip, deep int) (caller *Caller) {
+// FatalLevel have error caller and no stack trace, then calls os.Exit(1).
+func (x Level) GetCaller(skip, deep int) *Caller {
 
 	switch x {
 	case Level_Debug, Level_Error, Level_Panic:
 		return NewCaller(skip, deep, true)
 	case Level_Warn, Level_Fatal:
 		return NewCaller(skip, deep, false)
+	case Level_Normal:
+		return nil
+	default:
+		return NewCaller(skip, deep, false)
 	}
-
-	return
 }
 
 // Trace level.
 // PanicLevel have error caller and print stack trace, then panic error.
-// FatalLevel have error caller and no stack trace, then calls panic and os.Exit(1).
+// FatalLevel have error caller and no stack trace, then calls os.Exit(1).
 func (x Level) Trace(err error) {
 	switch x {
 	case Level_Panic:
-		panic(err)
+		log.Panic(err)
 	case Level_Fatal:
-		panic(err)
-		os.Exit(1)
+		log.Fatal(err)
+		// os.Exit(1)
 	}
 }

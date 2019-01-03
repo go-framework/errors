@@ -14,6 +14,6 @@ enum Level {
     Error = 3;
     // Panic level have error caller and print stack trace, then panic error.
     Panic = 4;
-    // Fatal level have error caller and no stack trace, then calls panic and os.Exit(1).
+    // Fatal level have error caller and no stack trace, then calls os.Exit(1).
     Fatal = 5;
 }
