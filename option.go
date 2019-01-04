@@ -14,11 +14,10 @@ func (f optionFunc) apply(e Error) {
 
 // With level option.
 // set option's level.
-// DebugLevel have error source and print stack trace.
-// NormalLevel have no error source and stack trace.
-// WarnLevel have error source no stack trace.
-// PanicLevel have error source and print stack trace, then panic error.
-// FatalLevel have error source and no stack trace, then calls panic and os.Exit(1).
+// Debug level have error caller and print stack trace.
+// Normal level have no error caller and stack trace.
+// Error level have error caller and stack trace.
+// Panic level have error caller and print stack trace, then panic error.
 func WithLevel(level Level) Option {
 	return optionFunc(func(e Error) {
 		e.SetLevel(level)
@@ -41,7 +40,7 @@ func WithCaller(skip, deep int, stack bool) Option {
 	})
 }
 
-// With caller option.
+// With level caller option.
 // set option's caller.
 func WithLevelCaller(skip, deep int) Option {
 	return optionFunc(func(e Error) {

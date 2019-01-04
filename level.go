@@ -78,9 +78,9 @@ func (x *Level) Get() interface{} {
 }
 
 // Get the caller stack trace by error level.
-// DebugLevel have error caller and print stack trace.
-// NormalLevel have no error caller and stack trace.
-// WarnLevel have error caller no stack trace.
+// Debug level have error caller and print stack trace.
+// Normal level have no error caller and stack trace.
+// Error level have error caller and stack trace.
 // Panic level have error caller and print stack trace, then panic error.
 func (x Level) GetCaller(skip, deep int) *Caller {
 
