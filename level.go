@@ -6,6 +6,11 @@ import (
 	"fmt"
 )
 
+// Panic function.
+var PanicFunc = func(v interface{}) {
+	panic(v)
+}
+
 // CapitalString returns an all-caps ASCII representation of the log level.
 func (x Level) CapitalString() string {
 	// Printing levels in all-caps is common enough that we should export this
@@ -94,6 +99,6 @@ func (x Level) GetCaller(skip, deep int) *Caller {
 func (x Level) Trace(err error) {
 	switch x {
 	case Level_Panic:
-		panic(err)
+		PanicFunc(err)
 	}
 }

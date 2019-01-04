@@ -6,69 +6,54 @@ import (
 	"strings"
 )
 
-const MaxInt64 = int64(^uint64(0) >> 1)
+const Undefined = "Undefined"
 
-// convert i to int64. when i is other type then return max int64 value.
-func iToInt64(i interface{}) int64 {
-
-	switch v := i.(type) {
-	case int:
-		return int64(v)
-	case int8:
-		return int64(v)
-	case int16:
-		return int64(v)
-	case int32:
-		return int64(v)
-	case int64:
-		return int64(v)
-	}
-
-	return MaxInt64
-}
-
-// Error code is a int64 type, implement Error interface.
-func (m *IntCodeError) GetErrCode() interface{} {
+// Error code is a uint64 type, implement Error interface.
+func (m *StringCodeError) GetErrCode() interface{} {
 	if m != nil {
 		return m.Code
 	}
-	return MaxInt64
+	return Undefined
 }
 
 // Set error code, implement Error interface.
-func (m *IntCodeError) SetErrCode(i interface{}) {
-	m.Code = iToInt64(i)
+func (m *StringCodeError) SetErrCode(i interface{}) {
+	if s, ok := i.(string); ok {
+		m.Code = s
+	} else {
+		m.Code = fmt.Sprintf("%v", i)
+	}
 }
 
 // Set level, implement Error interface.
-func (m *IntCodeError) SetLevel(l Level) {
+func (m *StringCodeError) SetLevel(l Level) {
 	m.Level = l
 }
 
 // Set message, implement Error interface.
-func (m *IntCodeError) SetMessage(message string) {
+func (m *StringCodeError) SetMessage(message string) {
 	m.Message = message
 }
 
 // Set detail, implement Error interface.
-func (m *IntCodeError) SetDetail(detail string) {
+func (m *StringCodeError) SetDetail(detail string) {
 	m.Detail = detail
 }
 
 // Set caller, implement Error interface.
-func (m *IntCodeError) SetCaller(caller *Caller) {
+func (m *StringCodeError) SetCaller(caller *Caller) {
 	m.Caller = caller
 }
 
 // Implement error interface.
-func (m *IntCodeError) Error() string {
+func (m *StringCodeError) Error() string {
 	buffer := strings.Builder{}
 
 	buffer.WriteString("level:")
 	buffer.WriteString(m.Level.String())
 
 	buffer.WriteString(" code:")
-	buffer.WriteString(strconv.FormatInt(m.Code, 10))
+	buffer.WriteString(m.Code)
 
 	if len(m.Message) > 0 {
 		buffer.WriteString(" message:")
@@ -99,7 +84,7 @@ func (m *IntCodeError) Error() string {
 
 // New error with interface and options.
 // interface can be Error, Message, error, string type.
-func (m *IntCodeError) New(err interface{}, opts ...Option) error {
+func (m *StringCodeError) New(err interface{}, opts ...Option) error {
 
 	if e, ok := err.(Error); ok {
 		// if detail is implement Error interface.
@@ -140,7 +125,7 @@ func (m *IntCodeError) New(err interface{}, opts ...Option) error {
 
 // New error with code interface, detail and options.
 // code interface can be Error, Message and int type.
-func (m *IntCodeError) NewCode(code interface{}, detail string, opts ...Option) error {
+func (m *StringCodeError) NewCode(code interface{}, detail string, opts ...Option) error {
 
 	if c, ok := code.(Error); ok {
 		// if detail is implement Error interface.
@@ -175,8 +160,8 @@ func (m *IntCodeError) NewCode(code interface{}, detail string, opts ...Option) 
 }
 
 // New error with code interface, message, detail string, level and options.
-// Code can be int type.
-func (m *IntCodeError) NewError(code interface{}, message string, detail string, level Level, opts ...Option) error {
+// Code can be string type.
+func (m *StringCodeError) NewError(code interface{}, message string, detail string, level Level, opts ...Option) error {
 
 	m.SetErrCode(code)
 	m.Message = message
@@ -197,4 +182,29 @@ func (m *IntCodeError) NewError(code interface{}, message string, detail string,
 	m.Level.Trace(m)
 
 	return m
+}
+
+// New string code error.
+func NewStringCodeError(code string, message string, detail string, level Level, opts ...Option) *StringCodeError {
+	e := &StringCodeError{
+		Code:    code,
+		Message: message,
+		Detail:  detail,
+		Level:   level,
+	}
+
+	// apply options.
+	for _, opt := range opts {
+		opt.apply(e)
+	}
+
+	// get caller.
+	if e.Caller == nil {
+		e.Caller = e.Level.GetCaller(4, 64)
+	}
+
+	// trace with level.
+	e.Level.Trace(e)
+
+	return e
 }

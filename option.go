@@ -40,3 +40,11 @@ func WithCaller(skip, deep int, stack bool) Option {
 		e.SetCaller(NewCaller(skip, deep, stack))
 	})
 }
+
+// With caller option.
+// set option's caller.
+func WithLevelCaller(skip, deep int) Option {
+	return optionFunc(func(e Error) {
+		e.SetCaller(e.GetLevel().GetCaller(skip, deep))
+	})
+}
