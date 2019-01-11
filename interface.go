@@ -16,9 +16,9 @@ type Error interface {
 	SetDetail(string)
 	SetCaller(*Caller)
 	// New function.
-	New(err interface{}, opts ...Option) error
-	NewCode(code interface{}, detail string, opts ...Option) error
-	NewError(code interface{}, message string, detail string, level Level, opts ...Option) error
+	New(err interface{}, opts ...Option) Error
+	NewCode(code interface{}, detail string, opts ...Option) Error
+	NewError(code interface{}, message string, detail string, level Level, opts ...Option) Error
 }
 
 // Message interface.

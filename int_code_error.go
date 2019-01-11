@@ -99,7 +99,7 @@ func (m *IntCodeError) Error() string {
 
 // New error with interface and options.
 // interface can be Error, Message, error, string type.
-func (m *IntCodeError) New(err interface{}, opts ...Option) error {
+func (m *IntCodeError) New(err interface{}, opts ...Option) Error {
 
 	if e, ok := err.(Error); ok {
 		// if detail is implement Error interface.
@@ -140,7 +140,7 @@ func (m *IntCodeError) New(err interface{}, opts ...Option) error {
 
 // New error with code interface, detail and options.
 // code interface can be Error, Message and int type.
-func (m *IntCodeError) NewCode(code interface{}, detail string, opts ...Option) error {
+func (m *IntCodeError) NewCode(code interface{}, detail string, opts ...Option) Error {
 
 	if c, ok := code.(Error); ok {
 		// if detail is implement Error interface.
@@ -176,7 +176,7 @@ func (m *IntCodeError) NewCode(code interface{}, detail string, opts ...Option) 
 
 // New error with code interface, message, detail string, level and options.
 // Code can be int type.
-func (m *IntCodeError) NewError(code interface{}, message string, detail string, level Level, opts ...Option) error {
+func (m *IntCodeError) NewError(code interface{}, message string, detail string, level Level, opts ...Option) Error {
 
 	m.SetErrCode(code)
 	m.Message = message
