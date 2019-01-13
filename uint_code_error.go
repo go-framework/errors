@@ -197,3 +197,21 @@ func (m *UintCodeError) NewError(code interface{}, message string, detail string
 
 	return m
 }
+
+// Equal with error, return true is equaled.
+func (m *UintCodeError) Equal(err error) bool {
+	if c, ok := err.(Error); ok {
+		// if err is implement Error interface.
+		return m.Code == uiToUint64(c.GetErrCode())
+	} else if c, ok := err.(Message); ok {
+		// if err is implement Message interface.
+		return m.Message == c.Message()
+	}
+
+	return m.Detail == err.Error()
+}
+
+// Equal code, return true is equaled.
+func (m *UintCodeError) EqualCode(code interface{}) bool {
+	return m.Code == uiToUint64(code)
+}
