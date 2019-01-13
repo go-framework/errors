@@ -17,7 +17,7 @@ type Error interface {
 	SetCaller(*Caller)
 	// New function.
 	New(err interface{}, opts ...Option) Error
-	NewCode(code interface{}, detail string, opts ...Option) Error
+	NewCode(code interface{}, detail interface{}, opts ...Option) Error
 	NewError(code interface{}, message string, detail string, level Level, opts ...Option) Error
 	// Equal function.
 	Equal(err error) bool

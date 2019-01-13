@@ -140,7 +140,7 @@ func (m *IntCodeError) New(err interface{}, opts ...Option) Error {
 
 // New error with code interface, detail and options.
 // code interface can be Error, Message and int type.
-func (m *IntCodeError) NewCode(code interface{}, detail string, opts ...Option) Error {
+func (m *IntCodeError) NewCode(code interface{}, detail interface{}, opts ...Option) Error {
 
 	if c, ok := code.(Error); ok {
 		// if detail is implement Error interface.
@@ -156,7 +156,7 @@ func (m *IntCodeError) NewCode(code interface{}, detail string, opts ...Option) 
 	}
 
 	// set detail value.
-	m.Detail = detail
+	m.Detail = getDetail(detail)
 
 	// apply options.
 	for _, opt := range opts {

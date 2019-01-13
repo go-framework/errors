@@ -42,7 +42,7 @@ func New(err interface{}, opts ...Option) Error {
 
 // New Error interface with code interface, detail and options.
 // code interface can be Error, Message and int type.
-func NewCode(code interface{}, detail string, opts ...Option) Error {
+func NewCode(code interface{}, detail interface{}, opts ...Option) Error {
 
 	// in debug mode.
 	if *Debug {
