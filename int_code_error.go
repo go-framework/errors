@@ -7,9 +7,6 @@ import (
 	"strings"
 )
 
-// Default IntCodeError interface type.
-var DefaultIntCodeError Error = &IntCodeError{}
-
 // Max of Int64
 const MaxInt64 = int64(^uint64(0) >> 1)
 

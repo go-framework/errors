@@ -4,9 +4,6 @@ import (
 	"fmt"
 )
 
-// Default Error interface type.
-var DefaultError Error = DefaultStringCodeError
-
 // Debug mode pointer.
 var Debug = new(bool)
 
@@ -42,7 +39,7 @@ func New(err interface{}, opts ...Option) Error {
 	}
 
 	// default use DefaultError.
-	return DefaultError.New(err, opts...)
+	return new(StringCodeError).New(err, opts...)
 }
 
 // New Error interface with code interface, detail and options.

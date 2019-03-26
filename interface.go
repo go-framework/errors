@@ -26,6 +26,8 @@ type Error interface {
 
 // Message interface.
 type Message interface {
+	// Error code.
+	ErrCode() interface{}
 	// Error is error interface.
 	Error() string
 	// Message is explain the error.

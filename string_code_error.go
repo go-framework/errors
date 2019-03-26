@@ -6,9 +6,6 @@ import (
 	"strings"
 )
 
-// Default StringCodeError interface type.
-var DefaultStringCodeError Error = &StringCodeError{}
-
 const Undefined = "Undefined"
 
 // Error code is a uint64 type, implement Error interface.

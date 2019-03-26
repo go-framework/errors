@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"time"
 )
 
 // Panic function.
@@ -101,7 +100,6 @@ func (x Level) GetCaller(skip, deep int) *Caller {
 	}
 }
 
-var timer *time.Timer
 // Trace level.
 // Panic level have error caller and print stack trace, then panic error.
 // Fatal level have error caller and print stack trace, then call to os.Exit(1).
