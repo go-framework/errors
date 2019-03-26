@@ -2,10 +2,15 @@ package errors
 
 import (
 	"fmt"
+	"reflect"
 	"strconv"
 	"strings"
 )
 
+// Default UintCodeError interface type.
+var DefaultUintCodeError Error = &UintCodeError{}
+
+// Max of Uint64
 const MaxUint64 = uint64(1<<64 - 1)
 
 // convert ui to uint64. when i is other type then return max uint64 value.
@@ -21,6 +26,11 @@ func uiToUint64(ui interface{}) uint64 {
 		return uint64(v)
 	case uint64:
 		return uint64(v)
+	}
+
+	switch reflect.TypeOf(ui).Kind() {
+	case reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uint:
+		return reflect.ValueOf(ui).Uint()
 	}
 
 	return MaxUint64

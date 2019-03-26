@@ -5,7 +5,8 @@ import (
 )
 
 // Default Error interface type.
-var DefaultError Error = &StringCodeError{}
+var DefaultError Error = DefaultStringCodeError
+
 // Debug mode pointer.
 var Debug = new(bool)
 
@@ -22,6 +23,10 @@ func DebugDisable() {
 // New error with interface and options.
 // interface can be Error, Message, error, string type.
 func New(err interface{}, opts ...Option) Error {
+
+	if err == nil {
+		return nil
+	}
 
 	// in debug mode.
 	if *Debug {
@@ -44,6 +49,10 @@ func New(err interface{}, opts ...Option) Error {
 // code interface can be Error, Message and int type.
 func NewCode(code interface{}, detail interface{}, opts ...Option) Error {
 
+	if detail == nil {
+		return nil
+	}
+
 	// in debug mode.
 	if *Debug {
 		opts = append(opts, WithLevel(Level_Debug))
@@ -57,8 +66,8 @@ func NewCode(code interface{}, detail interface{}, opts ...Option) Error {
 		return e.NewCode(code, detail, opts...)
 	}
 
-	// default use DefaultError.
-	return DefaultError.NewCode(code, detail, opts...)
+	// select use Error handler type.
+	return selectErrorHandler(code).NewCode(code, detail, opts...)
 }
 
 // New Error interface with format detail.
@@ -82,8 +91,8 @@ func NewCodeSprintf(code interface{}, format string, a ...interface{}) Error {
 		return e.NewCode(code, detail, opts...)
 	}
 
-	// default use DefaultError.
-	return DefaultError.NewCode(code, detail, opts...)
+	// select use Error handler type.
+	return selectErrorHandler(code).NewCode(code, detail, opts...)
 }
 
 // New Error interface with code interface, message, detail string, level and options.
@@ -97,8 +106,8 @@ func NewError(code interface{}, message string, detail string, level Level, opts
 		opts = append(opts, WithLevelCaller(7, 64))
 	}
 
-	// default use DefaultError.
-	return DefaultError.NewError(code, message, detail, level, opts...)
+	// select use Error handler type.
+	return selectErrorHandler(code).NewError(code, message, detail, level, opts...)
 }
 
 // Equal two error, if equaled return true.

@@ -18,7 +18,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 // Int code error description.
 type IntCodeError struct {
@@ -66,7 +66,7 @@ func (m *IntCodeError) GetLevel() Level {
 	if m != nil {
 		return m.Level
 	}
-	return Level_Debug
+	return Level_Normal
 }
 
 func (m *IntCodeError) GetCode() int64 {
@@ -143,7 +143,7 @@ func (m *UintCodeError) GetLevel() Level {
 	if m != nil {
 		return m.Level
 	}
-	return Level_Debug
+	return Level_Normal
 }
 
 func (m *UintCodeError) GetCode() uint64 {
@@ -220,7 +220,7 @@ func (m *StringCodeError) GetLevel() Level {
 	if m != nil {
 		return m.Level
 	}
-	return Level_Debug
+	return Level_Normal
 }
 
 func (m *StringCodeError) GetCode() string {

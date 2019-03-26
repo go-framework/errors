@@ -13,9 +13,10 @@ func TestLevel_String(t *testing.T) {
 		{level: -1, string: "-1"},
 		{level: Level_Debug, string: "Debug"},
 		{level: Level_Normal, string: "Normal"},
-		{level: Level_Error, string: "Error"},
+		{level: Level_Critical, string: "Critical"},
 		{level: Level_Panic, string: "Panic"},
-		{level: Level_Panic + 1, string: fmt.Sprintf("%d", Level_Panic+1)},
+		{level: Level_Fatal, string: "Fatal"},
+		{level: Level_Fatal + 1, string: fmt.Sprintf("%d", Level_Fatal+1)},
 	}
 
 	for idx, d := range ds {
@@ -33,9 +34,10 @@ func TestLevel_CapitalString(t *testing.T) {
 		{level: -1, string: "LEVEL(-1)"},
 		{level: Level_Debug, string: "DEBUG"},
 		{level: Level_Normal, string: "NORMAL"},
-		{level: Level_Error, string: "ERROR"},
+		{level: Level_Critical, string: "CRITICAL"},
 		{level: Level_Panic, string: "PANIC"},
-		{level: Level_Panic + 1, string: fmt.Sprintf("LEVEL(%d)", Level_Panic+1)},
+		{level: Level_Fatal, string: "Fatal"},
+		{level: Level_Fatal + 1, string: fmt.Sprintf("LEVEL(%d)", Level_Fatal+1)},
 	}
 
 	for idx, d := range ds {
@@ -54,9 +56,10 @@ func TestLevel_GetStack(t *testing.T) {
 		{level: -1, haveSource: true, haveStack: false},
 		{level: Level_Debug, haveSource: true, haveStack: true},
 		{level: Level_Normal, haveSource: false, haveStack: false},
-		{level: Level_Error, haveSource: true, haveStack: true},
+		{level: Level_Critical, haveSource: true, haveStack: true},
 		{level: Level_Panic, haveSource: true, haveStack: true},
-		{level: Level_Panic + 1, haveSource: true, haveStack: false},
+		{level: Level_Fatal, haveSource: true, haveStack: true},
+		{level: Level_Fatal + 1, haveSource: true, haveStack: false},
 	}
 
 	for idx, d := range ds {
@@ -85,19 +88,28 @@ func TestLevel_GetStack(t *testing.T) {
 	}
 }
 
-func TestLevel_Trace(t *testing.T) {
+func TestLevel_Trace_Panic(t *testing.T) {
 	var level Level = Level_Panic
 
-	func() {
-		defer func() {
-			if e := recover(); e != nil {
-				t.Log(e)
-				// panic(e)
-			}
-		}()
-		level.Trace(fmt.Errorf("%s %d", "TestLevel_Trace", level))
+	defer func() {
+		if e := recover(); e != nil {
+			t.Log(e)
+			// panic(e)
+		}
 	}()
 
-	level = Level_Panic
+	level.Trace(fmt.Errorf("%s %d", "TestLevel_Trace", level))
+}
+
+func TestLevel_Trace_Fatal(t *testing.T) {
+	var level Level = Level_Fatal
+
+	defer func() {
+		if e := recover(); e != nil {
+			t.Log(e)
+			// panic(e)
+		}
+	}()
+
 	level.Trace(fmt.Errorf("%s %d", "TestLevel_Trace", level))
 }

@@ -1,6 +1,9 @@
 package errors
 
-import "testing"
+import (
+	"reflect"
+	"testing"
+)
 
 func TestNew(t *testing.T) {
 	err := New("string")
@@ -10,11 +13,46 @@ func TestNew(t *testing.T) {
 	t.Log(err)
 }
 
+func TestNew_IntCodeError(t *testing.T) {
+	DebugEnable()
+	err := New(DefaultIntCodeError.New("IntCodeError"))
+	t.Log(err)
+}
+
+func TestNew_UintCodeError(t *testing.T) {
+	DebugEnable()
+	err := New(DefaultUintCodeError.New("UintCodeError"))
+	t.Log(err)
+}
+
 func TestNewCode(t *testing.T) {
 	err := NewCode("string code", "detail")
 	t.Log(err)
 	DebugEnable()
 	err = NewCode("string code", "detail")
+	t.Log(err)
+}
+
+func TestNewCode_int(t *testing.T) {
+	DebugEnable()
+	err := NewCode(1, "detail")
+	t.Log(reflect.TypeOf(err))
+	t.Log(err)
+}
+
+func TestNewCode_uint(t *testing.T) {
+	DebugEnable()
+	err := NewCode(uint(1), "detail")
+	t.Log(reflect.TypeOf(err))
+	t.Log(err)
+}
+
+func TestNewCode_defined(t *testing.T) {
+	type Code int
+	var code Code = 1
+	DebugEnable()
+	err := NewCode(code, "detail")
+	t.Log(reflect.TypeOf(err))
 	t.Log(err)
 }
 

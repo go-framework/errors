@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"log"
+	"time"
 )
 
 // Panic function.
@@ -16,14 +18,16 @@ func (x Level) CapitalString() string {
 	// Printing levels in all-caps is common enough that we should export this
 	// functionality.
 	switch x {
-	case Level_Debug:
-		return "DEBUG"
 	case Level_Normal:
 		return "NORMAL"
-	case Level_Error:
-		return "ERROR"
+	case Level_Debug:
+		return "DEBUG"
+	case Level_Critical:
+		return "Critical"
 	case Level_Panic:
 		return "PANIC"
+	case Level_Fatal:
+		return "FATAL"
 	default:
 		return fmt.Sprintf("LEVEL(%d)", x)
 	}
@@ -53,14 +57,16 @@ func (x *Level) UnmarshalText(text []byte) error {
 
 func (x *Level) unmarshalText(text []byte) bool {
 	switch string(text) {
-	case "debug", "DEBUG":
-		*x = Level_Debug
 	case "normal", "NORMAL", "": // make the zero value useful
 		*x = Level_Normal
-	case "error", "ERROR":
-		*x = Level_Error
+	case "debug", "DEBUG":
+		*x = Level_Debug
+	case "critical", "CRITICAL":
+		*x = Level_Critical
 	case "panic", "PANIC":
 		*x = Level_Panic
+	case "fatal", "FATAL":
+		*x = Level_Fatal
 	default:
 		return false
 	}
@@ -78,14 +84,15 @@ func (x *Level) Get() interface{} {
 }
 
 // Get the caller stack trace by error level.
-// Debug level have error caller and print stack trace.
 // Normal level have no error caller and stack trace.
-// Error level have error caller and stack trace.
+// Debug level have error caller and print stack trace.
+// Critical level have error caller and stack trace.
 // Panic level have error caller and print stack trace, then panic error.
+// Fatal level have error caller and print stack trace, then call to os.Exit(1).
 func (x Level) GetCaller(skip, deep int) *Caller {
 
 	switch x {
-	case Level_Debug, Level_Error, Level_Panic:
+	case Level_Debug, Level_Critical, Level_Panic, Level_Fatal:
 		return NewCaller(skip, deep, true)
 	case Level_Normal:
 		return nil
@@ -94,11 +101,15 @@ func (x Level) GetCaller(skip, deep int) *Caller {
 	}
 }
 
+var timer *time.Timer
 // Trace level.
 // Panic level have error caller and print stack trace, then panic error.
+// Fatal level have error caller and print stack trace, then call to os.Exit(1).
 func (x Level) Trace(err error) {
 	switch x {
 	case Level_Panic:
 		PanicFunc(err)
+	case Level_Fatal:
+		log.Fatalln(err)
 	}
 }

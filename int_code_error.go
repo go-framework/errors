@@ -2,10 +2,15 @@ package errors
 
 import (
 	"fmt"
+	"reflect"
 	"strconv"
 	"strings"
 )
 
+// Default IntCodeError interface type.
+var DefaultIntCodeError Error = &IntCodeError{}
+
+// Max of Int64
 const MaxInt64 = int64(^uint64(0) >> 1)
 
 // convert i to int64. when i is other type then return max int64 value.
@@ -22,6 +27,11 @@ func iToInt64(i interface{}) int64 {
 		return int64(v)
 	case int64:
 		return int64(v)
+	}
+
+	switch reflect.TypeOf(i).Kind() {
+	case reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64, reflect.Int:
+		return reflect.ValueOf(i).Int()
 	}
 
 	return MaxInt64

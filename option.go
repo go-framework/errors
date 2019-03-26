@@ -16,7 +16,7 @@ func (f optionFunc) apply(e Error) {
 // set option's level.
 // Debug level have error caller and print stack trace.
 // Normal level have no error caller and stack trace.
-// Error level have error caller and stack trace.
+// Critical level have error caller and stack trace.
 // Panic level have error caller and print stack trace, then panic error.
 func WithLevel(level Level) Option {
 	return optionFunc(func(e Error) {

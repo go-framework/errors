@@ -6,6 +6,9 @@ import (
 	"strings"
 )
 
+// Default StringCodeError interface type.
+var DefaultStringCodeError Error = &StringCodeError{}
+
 const Undefined = "Undefined"
 
 // Error code is a uint64 type, implement Error interface.
@@ -52,8 +55,10 @@ func (m *StringCodeError) Error() string {
 	buffer.WriteString("level:")
 	buffer.WriteString(m.Level.String())
 
-	buffer.WriteString(" code:")
-	buffer.WriteString(m.Code)
+	if len(m.Code) > 0 {
+		buffer.WriteString(" code:")
+		buffer.WriteString(m.Code)
+	}
 
 	if len(m.Message) > 0 {
 		buffer.WriteString(" message:")

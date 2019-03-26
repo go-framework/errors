@@ -4,12 +4,14 @@ package errors;
 
 // Level.
 enum Level {
-    // Debug level have error caller and print stack trace.
-    Debug = 0;
     // Normal level have no error caller and stack trace.
-    Normal = 1;
-    // Error level have error caller and stack trace.
-    Error = 2;
+    Normal = 0;
+    // Debug level have error caller and print stack trace.
+    Debug = 1;
+    // Critical level have error caller and stack trace.
+    Critical = 2;
     // Panic level have error caller and print stack trace, then panic error.
     Panic = 3;
+    // Fatal level have error caller and print stack trace, then call to os.Exit(1).
+    Fatal = 4;
 }
