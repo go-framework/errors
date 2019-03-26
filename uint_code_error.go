@@ -159,6 +159,7 @@ func (m *UintCodeError) NewCode(code interface{}, detail interface{}, opts ...Op
 	} else if c, ok := code.(Message); ok {
 		// if detail is implement Message interface.
 		m.Message = c.Message()
+		m.SetErrCode(code)
 	} else {
 		// code is int type.
 		m.SetErrCode(code)

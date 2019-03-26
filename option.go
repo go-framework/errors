@@ -36,7 +36,9 @@ func WithMessage(message string) Option {
 // set option's caller.
 func WithCaller(skip, deep int, stack bool) Option {
 	return optionFunc(func(e Error) {
-		e.SetCaller(NewCaller(skip, deep, stack))
+		if e.GetCaller() == nil {
+			e.SetCaller(NewCaller(skip, deep, stack))
+		}
 	})
 }
 
@@ -44,6 +46,8 @@ func WithCaller(skip, deep int, stack bool) Option {
 // set option's caller.
 func WithLevelCaller(skip, deep int) Option {
 	return optionFunc(func(e Error) {
-		e.SetCaller(e.GetLevel().GetCaller(skip, deep))
+		if e.GetCaller() == nil {
+			e.SetCaller(e.GetLevel().GetCaller(skip, deep))
+		}
 	})
 }

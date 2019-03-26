@@ -140,6 +140,7 @@ func (m *StringCodeError) NewCode(code interface{}, detail interface{}, opts ...
 	} else if c, ok := code.(Message); ok {
 		// if detail is implement Message interface.
 		m.Message = c.Message()
+		m.SetErrCode(code)
 	} else {
 		// code is int type.
 		m.SetErrCode(code)
