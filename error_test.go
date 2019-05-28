@@ -13,18 +13,6 @@ func TestNew(t *testing.T) {
 	t.Log(err)
 }
 
-func TestNew_IntCodeError(t *testing.T) {
-	DebugEnable()
-	err := New(DefaultIntCodeError.New("IntCodeError"))
-	t.Log(err)
-}
-
-func TestNew_UintCodeError(t *testing.T) {
-	DebugEnable()
-	err := New(DefaultUintCodeError.New("UintCodeError"))
-	t.Log(err)
-}
-
 func TestNewCode(t *testing.T) {
 	err := NewCode("string code", "detail")
 	t.Log(err)

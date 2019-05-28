@@ -11,7 +11,7 @@ import (
 const MaxInt64 = int64(^uint64(0) >> 1)
 
 // convert i to int64. when i is other type then return max int64 value.
-func iToInt64(i interface{}) int64 {
+func ToInt64(i interface{}) int64 {
 
 	switch v := i.(type) {
 	case int:
@@ -23,6 +23,8 @@ func iToInt64(i interface{}) int64 {
 	case int32:
 		return int64(v)
 	case int64:
+		return int64(v)
+	case IntCode:
 		return int64(v)
 	}
 
@@ -44,7 +46,7 @@ func (m *IntCodeError) GetErrCode() interface{} {
 
 // Set error code, implement Error interface.
 func (m *IntCodeError) SetErrCode(i interface{}) {
-	m.Code = iToInt64(i)
+	m.Code = ToInt64(i)
 }
 
 // Set level, implement Error interface.
@@ -116,7 +118,7 @@ func (m *IntCodeError) New(err interface{}, opts ...Option) Error {
 		m.Detail = e.GetDetail()
 	} else if e, ok := err.(Message); ok {
 		// if detail is implement Message interface.
-		m.Message = e.Message()
+		m.Message = e.GetMessage()
 		m.Detail = e.Error()
 	} else if e, ok := err.(error); ok {
 		// if detail is implement error interface.
@@ -156,7 +158,7 @@ func (m *IntCodeError) NewCode(code interface{}, detail interface{}, opts ...Opt
 		m.Message = c.GetMessage()
 	} else if c, ok := code.(Message); ok {
 		// if detail is implement Message interface.
-		m.Message = c.Message()
+		m.Message = c.GetMessage()
 		m.SetErrCode(code)
 	} else {
 		// code is int type.
@@ -211,10 +213,10 @@ func (m *IntCodeError) NewError(code interface{}, message string, detail string,
 func (m *IntCodeError) Equal(err error) bool {
 	if c, ok := err.(Error); ok {
 		// if err is implement Error interface.
-		return m.Code == iToInt64(c.GetErrCode())
+		return m.Code == ToInt64(c.GetErrCode())
 	} else if c, ok := err.(Message); ok {
 		// if err is implement Message interface.
-		return m.Message == c.Message()
+		return m.Message == c.GetMessage()
 	}
 
 	return m.Detail == err.Error()
@@ -222,5 +224,5 @@ func (m *IntCodeError) Equal(err error) bool {
 
 // Equal code, return true is equaled.
 func (m *IntCodeError) EqualCode(code interface{}) bool {
-	return m.Code == iToInt64(code)
+	return m.Code == ToInt64(code)
 }

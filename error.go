@@ -119,7 +119,7 @@ func Equal(e1 error, e2 error) bool {
 	// implement Message interface.
 	if e, ok := e1.(Message); ok {
 		if ee, ok := e2.(Message); ok {
-			return e.Message() == ee.Message()
+			return e.GetMessage() == ee.GetMessage()
 		}
 		return false
 	}

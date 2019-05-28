@@ -22,11 +22,11 @@ func getDetail(any interface{}) string {
 // select handler Error interface.
 func selectErrorHandler(code interface{}) Error {
 	switch code.(type) {
-	case string:
+	case string, StringErrCode:
 		return new(StringCodeError)
-	case uint8, uint16, uint32, uint64, uint:
+	case uint8, uint16, uint32, uint64, uint, UintErrCode:
 		return new(UintCodeError)
-	case int8, int16, int32, int64, int:
+	case int8, int16, int32, int64, int, IntCode:
 		return new(IntCodeError)
 	}
 
@@ -41,3 +41,4 @@ func selectErrorHandler(code interface{}) Error {
 
 	return new(StringCodeError)
 }
+

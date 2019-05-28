@@ -26,10 +26,10 @@ type Error interface {
 
 // Message interface.
 type Message interface {
-	// Error code.
-	ErrCode() interface{}
 	// Error is error interface.
 	Error() string
+	// Error code.
+	GetCode() interface{}
 	// Message is explain the error.
-	Message() string
+	GetMessage() string
 }

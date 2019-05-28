@@ -6,6 +6,9 @@ import (
 	"strings"
 )
 
+// Defined StringErrCode type.
+type StringErrCode string
+
 const Undefined = "Undefined"
 
 // Error code is a uint64 type, implement Error interface.
@@ -96,7 +99,7 @@ func (m *StringCodeError) New(err interface{}, opts ...Option) Error {
 		m.Detail = e.GetDetail()
 	} else if e, ok := err.(Message); ok {
 		// if detail is implement Message interface.
-		m.Message = e.Message()
+		m.Message = e.GetMessage()
 		m.Detail = e.Error()
 	} else if e, ok := err.(error); ok {
 		// if detail is implement error interface.
@@ -136,7 +139,7 @@ func (m *StringCodeError) NewCode(code interface{}, detail interface{}, opts ...
 		m.Message = c.GetMessage()
 	} else if c, ok := code.(Message); ok {
 		// if detail is implement Message interface.
-		m.Message = c.Message()
+		m.Message = c.GetMessage()
 		m.SetErrCode(code)
 	} else {
 		// code is int type.
@@ -194,7 +197,7 @@ func (m *StringCodeError) Equal(err error) bool {
 		return m.EqualCode(c.GetErrCode())
 	} else if c, ok := err.(Message); ok {
 		// if err is implement Message interface.
-		return m.Message == c.Message()
+		return m.Message == c.GetMessage()
 	}
 
 	return m.Detail == err.Error()

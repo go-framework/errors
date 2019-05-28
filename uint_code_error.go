@@ -7,6 +7,9 @@ import (
 	"strings"
 )
 
+// Defined UintErrCode type.
+type UintErrCode int
+
 // Max of Uint64
 const MaxUint64 = uint64(1<<64 - 1)
 
@@ -22,6 +25,8 @@ func uiToUint64(ui interface{}) uint64 {
 	case uint32:
 		return uint64(v)
 	case uint64:
+		return uint64(v)
+	case UintErrCode:
 		return uint64(v)
 	}
 
@@ -115,7 +120,7 @@ func (m *UintCodeError) New(err interface{}, opts ...Option) Error {
 		m.Detail = e.GetDetail()
 	} else if e, ok := err.(Message); ok {
 		// if detail is implement Message interface.
-		m.Message = e.Message()
+		m.Message = e.GetMessage()
 		m.Detail = e.Error()
 	} else if e, ok := err.(error); ok {
 		// if detail is implement error interface.
@@ -155,7 +160,7 @@ func (m *UintCodeError) NewCode(code interface{}, detail interface{}, opts ...Op
 		m.Message = c.GetMessage()
 	} else if c, ok := code.(Message); ok {
 		// if detail is implement Message interface.
-		m.Message = c.Message()
+		m.Message = c.GetMessage()
 		m.SetErrCode(code)
 	} else {
 		// code is int type.
@@ -213,7 +218,7 @@ func (m *UintCodeError) Equal(err error) bool {
 		return m.Code == uiToUint64(c.GetErrCode())
 	} else if c, ok := err.(Message); ok {
 		// if err is implement Message interface.
-		return m.Message == c.Message()
+		return m.Message == c.GetMessage()
 	}
 
 	return m.Detail == err.Error()
