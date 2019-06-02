@@ -63,29 +63,37 @@ const (
 	ErrNotAllowed
 	ErrValidation
 	ErrSave
+	ErrNotMatched
+	ErrUnexpected
+	ErrNotImplement
+	ErrRequest
 )
 
 // Int error code text map.
 var CodeTexts = map[errors.IntCode]string{
-	Succeed:        "Succeed",
-	ErrUndefined:   "Undefined code",
-	ErrUnsupported: "Unsupported error",
-	ErrNil:         "Nil error",
-	ErrMarshal:     "Marshal error",
-	ErrUnmarshal:   "Unmarshal error",
-	ErrCode:        "Code error",
-	ErrDecode:      "Decode error",
-	ErrHttp:        "Http error",
-	ErrRedis:       "Redis error",
-	ErrDatabase:    "Data base error",
-	ErrTimeout:     "Timeout error",
-	ErrAuthorize:   "Authorize error",
-	ErrExist:       "Is exist",
-	ErrNotExist:    "Not exist",
-	ErrPermission:  "Permission error",
-	ErrParameter:   "Parameter error",
-	ErrFormat:      "Format error",
-	ErrNotAllowed:  "Not allowed error",
-	ErrValidation:  "Validation error",
-	ErrSave:        "Save error",
+	Succeed:         "Succeed",
+	ErrUndefined:    "Undefined code",
+	ErrUnsupported:  "Unsupported error",
+	ErrNil:          "Nil error",
+	ErrMarshal:      "Marshal error",
+	ErrUnmarshal:    "Unmarshal error",
+	ErrCode:         "Code error",
+	ErrDecode:       "Decode error",
+	ErrHttp:         "Http error",
+	ErrRedis:        "Redis error",
+	ErrDatabase:     "Data base error",
+	ErrTimeout:      "Timeout error",
+	ErrAuthorize:    "Authorize error",
+	ErrExist:        "Is exist",
+	ErrNotExist:     "Not exist",
+	ErrPermission:   "Permission error",
+	ErrParameter:    "Parameter error",
+	ErrFormat:       "Format error",
+	ErrNotAllowed:   "Not allowed error",
+	ErrValidation:   "Validation error",
+	ErrSave:         "Save error",
+	ErrNotMatched:   "Not matched error",
+	ErrUnexpected:   "Unexpected error",
+	ErrNotImplement: "Not implement error",
+	ErrRequest:      "Request error",
 }

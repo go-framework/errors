@@ -14,6 +14,9 @@ func (e *multipleError) Error() string {
 	buffer := strings.Builder{}
 
 	for _, item := range e.list {
+		if item == nil {
+			continue
+		}
 		buffer.WriteString(item.Error())
 		buffer.WriteByte('\n')
 	}
