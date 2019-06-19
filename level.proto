@@ -8,10 +8,12 @@ enum Level {
     Normal = 0;
     // Debug level have error caller and print stack trace.
     Debug = 1;
+    // Critical level have error caller and no stack trace.
+    Warn = 2;
     // Critical level have error caller and stack trace.
-    Critical = 2;
+    Critical = 3;
     // Panic level have error caller and print stack trace, then panic error.
-    Panic = 3;
+    Panic = 4;
     // Fatal level have error caller and print stack trace, then call to os.Exit(1).
-    Fatal = 4;
+    Fatal = 5;
 }

@@ -48,11 +48,11 @@ func GetCodeText(e errors.IntCode) string {
 // Const int error code.
 const (
 	Succeed errors.IntCode = iota * -1
+	Errors
 	ErrUndefined
 	ErrUnsupported errors.IntCode = (iota * -1) + errors.IntCodeOffset
 	ErrNil
 	ErrNull
-	ErrList
 	ErrMarshal
 	ErrUnmarshal
 	ErrCode
@@ -81,11 +81,11 @@ const (
 // Int error code text map.
 var CodeTexts = map[errors.IntCode]string{
 	Succeed:           "Succeed",
+	Errors:            "Error list",
 	ErrUndefined:      "Undefined code",
 	ErrUnsupported:    "Unsupported error",
 	ErrNil:            "Nil error",
 	ErrNull:           "Null error",
-	ErrList:           "List error",
 	ErrMarshal:        "Marshal error",
 	ErrUnmarshal:      "Unmarshal error",
 	ErrCode:           "Code error",

@@ -82,6 +82,15 @@ func (e IntCode) Debug(detail interface{}, opts ...Option) error {
 }
 
 // Return a new error with critical level detail.
+func (e IntCode) Warn(detail interface{}, opts ...Option) error {
+	if detail == nil {
+		return nil
+	}
+	opts = append(opts, WithSetLevelCaller(Level_Warn, 8, 64))
+	return NewCode(e, detail, opts...)
+}
+
+// Return a new error with critical level detail.
 func (e IntCode) Critical(detail interface{}, opts ...Option) error {
 	if detail == nil {
 		return nil

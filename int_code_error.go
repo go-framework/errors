@@ -90,12 +90,15 @@ func (m *IntCodeError) Error() string {
 	}
 
 	if m.Caller != nil {
-		// buffer.WriteString(" file: ")
-		// buffer.WriteString(m.Caller.File)
-		// buffer.WriteString(" function: ")
-		// buffer.WriteString(m.Caller.Function)
-		// buffer.WriteString(" line: ")
-		// buffer.WriteString(strconv.FormatInt(int64(m.Caller.Line), 10))
+		switch m.GetLevel() {
+		case Level_Warn:
+			buffer.WriteString(" file: ")
+			buffer.WriteString(m.Caller.File)
+			buffer.WriteString(" function: ")
+			buffer.WriteString(m.Caller.Function)
+			buffer.WriteString(" line: ")
+			buffer.WriteString(strconv.FormatInt(int64(m.Caller.Line), 10))
+		}
 
 		if len(m.Caller.Stacks) > 0 {
 			buffer.WriteString("\n")

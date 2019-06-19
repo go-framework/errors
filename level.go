@@ -21,6 +21,8 @@ func (x Level) CapitalString() string {
 		return "NORMAL"
 	case Level_Debug:
 		return "DEBUG"
+	case Level_Warn:
+		return "WARN"
 	case Level_Critical:
 		return "Critical"
 	case Level_Panic:
@@ -60,6 +62,8 @@ func (x *Level) unmarshalText(text []byte) bool {
 		*x = Level_Normal
 	case "debug", "DEBUG":
 		*x = Level_Debug
+	case "warn", "WARN":
+		*x = Level_Warn
 	case "critical", "CRITICAL":
 		*x = Level_Critical
 	case "panic", "PANIC":
@@ -85,6 +89,7 @@ func (x *Level) Get() interface{} {
 // Get the caller stack trace by error level.
 // Normal level have no error caller and stack trace.
 // Debug level have error caller and print stack trace.
+// Warn level have error caller and no stack trace.
 // Critical level have error caller and stack trace.
 // Panic level have error caller and print stack trace, then panic error.
 // Fatal level have error caller and print stack trace, then call to os.Exit(1).
@@ -95,6 +100,8 @@ func (x Level) GetCaller(skip, deep int) *Caller {
 		return NewCaller(skip, deep, true)
 	case Level_Normal:
 		return nil
+	case Level_Warn:
+		return NewCaller(skip, deep, false)
 	default:
 		return NewCaller(skip, deep, false)
 	}

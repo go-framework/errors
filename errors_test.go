@@ -7,23 +7,34 @@ import (
 )
 
 func TestAppend(t *testing.T) {
-	var err error
-	t.Log(err)
+	var errs error
+	t.Log(errs)
 
-	err = Append(err, fmt.Errorf("error 1"), fmt.Errorf("error 2"))
-	t.Log(err)
+	errs = Append(errs, fmt.Errorf("error 1"), fmt.Errorf("error 2"))
+	t.Log(errs)
 
-	err = Append(err, fmt.Errorf("error 3"), fmt.Errorf("error 4"))
-	t.Log(err)
+	errs = Append(errs, fmt.Errorf("error 3"), fmt.Errorf("error 4"))
+	t.Log(errs)
 
-	err = fmt.Errorf("error 0")
+	errs = fmt.Errorf("error 0")
 
-	t.Log(err)
-	err = Append(err, fmt.Errorf("error 1"), fmt.Errorf("error 2"))
-	t.Log(err)
+	t.Log(errs)
+	errs = Append(errs, fmt.Errorf("error 1"), fmt.Errorf("error 2"))
+	t.Log(errs)
 
-	err = Append(err, fmt.Errorf("error 3"), fmt.Errorf("error 4"))
-	t.Log(err)
+	errs = Append(errs, fmt.Errorf("error 3"), fmt.Errorf("error 4"))
+	t.Log(errs)
+
+	var errs2 error
+	t.Log(errs2)
+
+	errs2 = Append(errs2, errs)
+
+	t.Log(errs2)
+
+	errs2 = Append(errs2, errs)
+
+	t.Log(errs2)
 }
 
 func TestErrors(t *testing.T) {

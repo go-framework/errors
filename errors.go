@@ -46,6 +46,11 @@ func (errs *Errors) Append(err ...error) {
 		if e == nil {
 			continue
 		}
+		// is self type?
+		if t, ok := e.(Errors); ok {
+			*errs = append(*errs, t...)
+			continue
+		}
 		*errs = append(*errs, e)
 	}
 }

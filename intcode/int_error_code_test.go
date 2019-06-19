@@ -17,6 +17,7 @@ func TestGetCodeText(t *testing.T) {
 func TestErrCode_Level(t *testing.T) {
 	t.Log(ErrNil.Normal("Normal"))
 	t.Log(ErrNil.Debug("Debug"))
+	t.Log(ErrNil.Warn("Warn"))
 	t.Log(ErrNil.Critical("Critical"))
 
 	func() {
@@ -30,5 +31,8 @@ func TestErrCode_Level(t *testing.T) {
 		t.Log(ErrNil.Panic("Panic"))
 	}()
 
+}
+
+func TestErrCode_Level_Fatal(t *testing.T) {
 	t.Log(ErrNil.Fatal("Fatal"))
 }
