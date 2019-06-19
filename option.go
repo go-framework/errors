@@ -43,10 +43,21 @@ func WithCaller(skip, deep int, stack bool) Option {
 }
 
 // With level caller option.
-// set option's caller.
+// get Error's level and set option's caller.
 func WithLevelCaller(skip, deep int) Option {
 	return optionFunc(func(e Error) {
 		if e.GetCaller() == nil {
+			e.SetCaller(e.GetLevel().GetCaller(skip, deep))
+		}
+	})
+}
+
+// With set level caller option.
+// get Error's level and set option's caller.
+func WithSetLevelCaller(level Level, skip, deep int) Option {
+	return optionFunc(func(e Error) {
+		if e.GetCaller() == nil {
+			e.SetLevel(level)
 			e.SetCaller(e.GetLevel().GetCaller(skip, deep))
 		}
 	})

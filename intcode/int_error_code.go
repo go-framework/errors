@@ -35,6 +35,11 @@ func GetMessage(err error) string {
 	return GetCodeText(ErrUndefined)
 }
 
+// Get detail from any interface.
+func GetDetail(err interface{}) string {
+	return errors.GetDetail(err)
+}
+
 // Get int error code text.
 func GetCodeText(e errors.IntCode) string {
 	return CodeTexts[e]
@@ -46,9 +51,12 @@ const (
 	ErrUndefined
 	ErrUnsupported errors.IntCode = (iota * -1) + errors.IntCodeOffset
 	ErrNil
+	ErrNull
+	ErrList
 	ErrMarshal
 	ErrUnmarshal
 	ErrCode
+	ErrEncode
 	ErrDecode
 	ErrHttp
 	ErrRedis
@@ -67,33 +75,38 @@ const (
 	ErrUnexpected
 	ErrNotImplement
 	ErrRequest
+	ErrUnavailability
 )
 
 // Int error code text map.
 var CodeTexts = map[errors.IntCode]string{
-	Succeed:         "Succeed",
-	ErrUndefined:    "Undefined code",
-	ErrUnsupported:  "Unsupported error",
-	ErrNil:          "Nil error",
-	ErrMarshal:      "Marshal error",
-	ErrUnmarshal:    "Unmarshal error",
-	ErrCode:         "Code error",
-	ErrDecode:       "Decode error",
-	ErrHttp:         "Http error",
-	ErrRedis:        "Redis error",
-	ErrDatabase:     "Data base error",
-	ErrTimeout:      "Timeout error",
-	ErrAuthorize:    "Authorize error",
-	ErrExist:        "Is exist",
-	ErrNotExist:     "Not exist",
-	ErrPermission:   "Permission error",
-	ErrParameter:    "Parameter error",
-	ErrFormat:       "Format error",
-	ErrNotAllowed:   "Not allowed error",
-	ErrValidation:   "Validation error",
-	ErrSave:         "Save error",
-	ErrNotMatched:   "Not matched error",
-	ErrUnexpected:   "Unexpected error",
-	ErrNotImplement: "Not implement error",
-	ErrRequest:      "Request error",
+	Succeed:           "Succeed",
+	ErrUndefined:      "Undefined code",
+	ErrUnsupported:    "Unsupported error",
+	ErrNil:            "Nil error",
+	ErrNull:           "Null error",
+	ErrList:           "List error",
+	ErrMarshal:        "Marshal error",
+	ErrUnmarshal:      "Unmarshal error",
+	ErrCode:           "Code error",
+	ErrEncode:         "Encode error",
+	ErrDecode:         "Decode error",
+	ErrHttp:           "Http error",
+	ErrRedis:          "Redis error",
+	ErrDatabase:       "Database error",
+	ErrTimeout:        "Timeout error",
+	ErrAuthorize:      "Authorize error",
+	ErrExist:          "Is exist",
+	ErrNotExist:       "Not exist",
+	ErrPermission:     "Permission error",
+	ErrParameter:      "Parameter error",
+	ErrFormat:         "Format error",
+	ErrNotAllowed:     "Not allowed error",
+	ErrValidation:     "Validation error",
+	ErrSave:           "Save error",
+	ErrNotMatched:     "Not matched error",
+	ErrUnexpected:     "Unexpected error",
+	ErrNotImplement:   "Not implement error",
+	ErrRequest:        "Request error",
+	ErrUnavailability: "Unavailability error",
 }

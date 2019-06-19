@@ -147,7 +147,7 @@ func (m *StringCodeError) NewCode(code interface{}, detail interface{}, opts ...
 	}
 
 	// set detail value.
-	m.Detail = getDetail(detail)
+	m.Detail = GetDetail(detail)
 
 	// apply options.
 	for _, opt := range opts {

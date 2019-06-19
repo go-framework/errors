@@ -5,8 +5,8 @@ import (
 	"reflect"
 )
 
-// get detail from any interface.
-func getDetail(any interface{}) string {
+// Get detail from any interface.
+func GetDetail(any interface{}) string {
 	// implement Error interface.
 	if e, ok := any.(Error); ok {
 		return e.GetDetail()
@@ -42,3 +42,17 @@ func selectErrorHandler(code interface{}) Error {
 	return new(StringCodeError)
 }
 
+// Return nil if err is nil.
+func Nil(err error) error {
+	switch t := err.(type) {
+	case nil:
+		return nil
+	case Errors:
+		if len(t) == 0 {
+			return nil
+		}
+		return t
+	default:
+		return err
+	}
+}

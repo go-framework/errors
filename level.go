@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"log"
+	"os"
 )
 
 // Panic function.
@@ -108,6 +108,7 @@ func (x Level) Trace(err error) {
 	case Level_Panic:
 		PanicFunc(err)
 	case Level_Fatal:
-		log.Fatalln(err)
+		fmt.Println(err)
+		os.Exit(1)
 	}
 }

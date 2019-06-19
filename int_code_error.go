@@ -73,32 +73,32 @@ func (m *IntCodeError) SetCaller(caller *Caller) {
 func (m *IntCodeError) Error() string {
 	buffer := strings.Builder{}
 
-	buffer.WriteString("level:")
+	buffer.WriteString("level: ")
 	buffer.WriteString(m.Level.String())
 
-	buffer.WriteString(" code:")
+	buffer.WriteString(" code: ")
 	buffer.WriteString(strconv.FormatInt(m.Code, 10))
 
 	if len(m.Message) > 0 {
-		buffer.WriteString(" message:")
+		buffer.WriteString(" message: ")
 		buffer.WriteString(m.Message)
 	}
 
 	if len(m.Detail) > 0 {
-		buffer.WriteString(" detail:")
+		buffer.WriteString(" detail: ")
 		buffer.WriteString(m.Detail)
 	}
 
 	if m.Caller != nil {
-		buffer.WriteString(" file:")
-		buffer.WriteString(m.Caller.File)
-		buffer.WriteString(" function:")
-		buffer.WriteString(m.Caller.Function)
-		buffer.WriteString(" line:")
-		buffer.WriteString(strconv.FormatInt(int64(m.Caller.Line), 10))
+		// buffer.WriteString(" file: ")
+		// buffer.WriteString(m.Caller.File)
+		// buffer.WriteString(" function: ")
+		// buffer.WriteString(m.Caller.Function)
+		// buffer.WriteString(" line: ")
+		// buffer.WriteString(strconv.FormatInt(int64(m.Caller.Line), 10))
 
 		if len(m.Caller.Stacks) > 0 {
-			buffer.WriteByte('\n')
+			buffer.WriteString("\n")
 			buffer.WriteString(strings.Join(m.Caller.Stacks, "\n"))
 		}
 	}
@@ -166,7 +166,7 @@ func (m *IntCodeError) NewCode(code interface{}, detail interface{}, opts ...Opt
 	}
 
 	// set detail value.
-	m.Detail = getDetail(detail)
+	m.Detail = GetDetail(detail)
 
 	// apply options.
 	for _, opt := range opts {

@@ -168,7 +168,7 @@ func (m *UintCodeError) NewCode(code interface{}, detail interface{}, opts ...Op
 	}
 
 	// set detail value.
-	m.Detail = getDetail(detail)
+	m.Detail = GetDetail(detail)
 
 	// apply options.
 	for _, opt := range opts {

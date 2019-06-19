@@ -4,49 +4,79 @@ import (
 	"strings"
 )
 
-// multiple error.
-type multipleError struct {
-	list []error
+// Error list.
+type Errors []error
+
+// New Errors.
+func NewErrors() Errors {
+	return make([]error, 0)
 }
 
-// implement error interface, '\n' is separator error list.
-func (e *multipleError) Error() string {
+// Implement error interface, '\n' is separator error list.
+func (errs Errors) Error() string {
+	if len(errs) == 0 {
+		return "<nil>"
+	}
+
 	buffer := strings.Builder{}
 
-	for _, item := range e.list {
+	buffer.WriteString("error list:")
+	for _, item := range errs {
 		if item == nil {
 			continue
 		}
-		buffer.WriteString(item.Error())
-		buffer.WriteByte('\n')
+		buffer.WriteString("\n\t* ")
+		// replace \n \t
+		str := strings.Replace(item.Error(), "\t", "\t\t", -1)
+		str = strings.Replace(str, "\n", "\n\t\t", -1)
+		buffer.WriteString(str)
 	}
 
 	return buffer.String()
 }
 
-// Append multiple error err to the end of error e.
-func Append(e error, err ...error) error {
-	// append nil error, then return nil.
-	if e == nil && len(err) == 0 {
+// Append multiple error.
+// ignore nil error.
+func (errs *Errors) Append(err ...error) {
+	if len(err) == 0 {
+		return
+	}
+
+	for _, e := range err {
+		if e == nil {
+			continue
+		}
+		*errs = append(*errs, e)
+	}
+}
+
+// Errors is nil error.
+func (errs Errors) Nil() error {
+	if len(errs) == 0 {
 		return nil
 	}
-	// e is nil then new multipleError.
-	if e == nil {
-		e = &multipleError{
-			list: err,
-		}
 
+	return errs
+}
+
+// Append multiple error err to the end of error errs.
+func Append(e error, err ...error) error {
+	// append a empty error list, return e.
+	if len(err) == 0 {
 		return e
 	}
+
 	// switch error type.
-	switch m := e.(type) {
-	case *multipleError:
-		m.list = append(m.list, err...)
-		return m
+	switch t := e.(type) {
+	case Errors:
+		t.Append(err...)
+		return t
 	default:
-		e2 := &multipleError{}
-		e2.list = append(e2.list, e)
-		e2.list = append(e2.list, err...)
-		return e2
+		errs := NewErrors()
+
+		errs.Append(e)
+		errs.Append(err...)
+
+		return errs
 	}
 }
