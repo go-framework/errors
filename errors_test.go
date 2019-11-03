@@ -131,11 +131,14 @@ func TestErrors_MarshalJSON(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "newline tab",
+			name: "int code error",
 			errs: []error{
 				IntCode(-1).WithDetail("-1"),
+				IntCode(-2).WithDetail("newline \n error"),
+				IntCode(-3).WithDetail("tab \t error"),
+				IntCode(-4).WithDetail("tab newline \t\n error"),
 			},
-			want:    []byte(`[{"code":-1,"detail":"-1"}]`),
+			want:    []byte(`[{"code":-1,"detail":"-1"},{"code":-2,"detail":"newline \n error"},{"code":-3,"detail":"tab \t error"},{"code":-4,"detail":"tab newline \t\n error"}]`),
 			wantErr: false,
 		},
 	}

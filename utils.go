@@ -5,6 +5,30 @@ import (
 	"reflect"
 )
 
+// Get error in given err.
+func GetError(err interface{}) error {
+	if err == nil {
+		return nil
+	}
+
+	// check err type
+	if e, ok := err.(Error); ok {
+		// implement Error interface.
+		return e
+	} else if e, ok := err.(error); ok {
+		// check is sdk error
+		if IsSDKError(e) {
+			return NewTextError(e.Error())
+		}
+
+		return e
+	} else if str, ok := err.(string); ok {
+		return NewTextError(str)
+	}
+
+	return NewTextError(fmt.Sprintf("%v", err))
+}
+
 // Get detail from any interface.
 func GetDetail(any interface{}) string {
 	// implement Error interface.
@@ -16,7 +40,7 @@ func GetDetail(any interface{}) string {
 		return str
 	}
 
-	if any == nil{
+	if any == nil {
 		return ""
 	}
 

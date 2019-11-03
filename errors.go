@@ -87,14 +87,15 @@ func (errs Errors) MarshalJSON() ([]byte, error) {
 		if IsSDKError(e) {
 			e = NewTextError(e.Error())
 		}
+
 		// marshal error
 		data, err := jsoniter.Marshal(e)
 		if err != nil {
 			return nil, err
 		}
 
+		// write error data
 		buffer.Write(data)
-		// fmt.Fprintf(buffer, `"%s"`, err)
 		if idx < n-1 {
 			buffer.WriteByte(',')
 		}
