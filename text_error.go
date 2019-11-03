@@ -2,7 +2,7 @@ package errors
 
 // Text error defined.
 type TextError struct {
-	Text string `json:"error"`
+	Text string `json:"text"`
 }
 
 func (e *TextError) Error() string {
