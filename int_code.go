@@ -63,6 +63,15 @@ func (e IntCode) WithDetail(detail interface{}, opts ...Option) error {
 	return NewCode(e, detail, opts...)
 }
 
+// Return a new error with err.
+func (e IntCode) WithError(err error, opts ...Option) error {
+	if err == nil {
+		return nil
+	}
+	opts = append(opts, WithLevelCaller(8, 64))
+	return NewCode(e, err, opts...)
+}
+
 // Return a new error with normal level detail.
 func (e IntCode) Normal(detail interface{}, opts ...Option) error {
 	if detail == nil {

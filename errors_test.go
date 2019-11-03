@@ -3,6 +3,7 @@ package errors
 import (
 	"errors"
 	"fmt"
+	"reflect"
 	"testing"
 
 	jsoniter "github.com/json-iterator/go"
@@ -78,11 +79,11 @@ func TestJSON(t *testing.T) {
 
 	errs.Append(nil)
 	errs.Append(errors.New("go errors error"))
-	errs.Append(NewTextError("text error"))
-	errs.Append(NewTextError("text error \n separator"))
-	errs.Append(NewTextError("text error \t separator"))
-	errs.Append(NewTextError("text error \n\t separator"))
-	errs.Append(NewTextError("text error \t\n separator"))
+	errs.Append(NewTextError("test error"))
+	errs.Append(NewTextError("test error \n separator"))
+	errs.Append(NewTextError("test error \t separator"))
+	errs.Append(NewTextError("test error \n\t separator"))
+	errs.Append(NewTextError("test error \t\n separator"))
 
 	var intCode IntCode = -1
 	errs.Append(intCode.WithDetail("IntCode"))
@@ -95,4 +96,61 @@ func TestJSON(t *testing.T) {
 	}
 
 	t.Log(str)
+}
+
+func TestErrors_MarshalJSON(t *testing.T) {
+
+	tests := []struct {
+		name    string
+		errs    Errors
+		want    []byte
+		wantErr bool
+	}{
+		{
+			name:    "empty string",
+			errs:    []error{nil},
+			want:    []byte("[null]"),
+			wantErr: false,
+		},
+		{
+			name: "normal",
+			errs: []error{
+				errors.New("go error"),
+				NewTextError("text error"),
+			},
+			want:    []byte(`[{"error":"go error"},{"error":"text error"}]`),
+			wantErr: false,
+		},
+		{
+			name: "newline tab",
+			errs: []error{
+				errors.New("test newline \n\t error"),
+				NewTextError("test newline \n\t error"),
+			},
+			want:    []byte(`[{"error":"test newline \n\t error"},{"error":"test newline \n\t error"}]`),
+			wantErr: false,
+		},
+		{
+			name: "newline tab",
+			errs: []error{
+				IntCode(-1).WithDetail("-1"),
+			},
+			want:    []byte(`[{"code":-1,"detail":"-1"}]`),
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := jsoniter.Marshal(tt.errs)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("MarshalJSON() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("MarshalJSON() got = %v, want %v", string(got), string(tt.want))
+			} else {
+				t.Logf("MarshalJSON() got = %v", string(got))
+			}
+		})
+	}
 }

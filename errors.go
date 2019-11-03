@@ -1,8 +1,11 @@
 package errors
 
 import (
+	"bytes"
 	"strconv"
 	"strings"
+
+	jsoniter "github.com/json-iterator/go"
 )
 
 // Error list.
@@ -66,6 +69,40 @@ func (errs Errors) Nil() error {
 	}
 
 	return errs
+}
+
+// Marshal JSON
+func (errs Errors) MarshalJSON() ([]byte, error) {
+	// new buffer
+	buffer := &bytes.Buffer{}
+
+	buffer.WriteByte('[')
+
+	// get length
+	n := len(errs)
+
+	// loop
+	for idx, e := range errs {
+		// check is sdk error
+		if IsSDKError(e) {
+			e = NewTextError(e.Error())
+		}
+		// marshal error
+		data, err := jsoniter.Marshal(e)
+		if err != nil {
+			return nil, err
+		}
+
+		buffer.Write(data)
+		// fmt.Fprintf(buffer, `"%s"`, err)
+		if idx < n-1 {
+			buffer.WriteByte(',')
+		}
+	}
+
+	buffer.WriteByte(']')
+
+	return buffer.Bytes(), nil
 }
 
 // Append multiple error err to the end of error errs.
