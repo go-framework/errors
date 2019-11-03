@@ -18,6 +18,8 @@ func GetCode(err error) errors.IntCode {
 		return errors.IntCode(errors.ToInt64(i.GetCode()))
 	} else if i, ok := err.(errors.Error); ok {
 		return errors.IntCode(errors.ToInt64(i.GetErrCode()))
+	} else if _, ok := err.(errors.Errors); ok {
+		return Errors
 	}
 	return ErrUndefined
 }
@@ -31,12 +33,17 @@ func GetMessage(err error) string {
 		return i.GetMessage()
 	} else if i, ok := err.(errors.Error); ok {
 		return i.GetMessage()
+	} else if _, ok := err.(errors.Errors); ok {
+		return GetCodeText(Errors)
 	}
 	return GetCodeText(ErrUndefined)
 }
 
 // Get detail from any interface.
 func GetDetail(err interface{}) string {
+	if err == nil{
+		return ""
+	}
 	return errors.GetDetail(err)
 }
 
@@ -76,6 +83,8 @@ const (
 	ErrNotImplement
 	ErrRequest
 	ErrUnavailability
+	ErrInvalid
+	ErrDisabled
 )
 
 // Int error code text map.
@@ -109,4 +118,6 @@ var CodeTexts = map[errors.IntCode]string{
 	ErrNotImplement:   "Not implement error",
 	ErrRequest:        "Request error",
 	ErrUnavailability: "Unavailability error",
+	ErrInvalid:        "Invalid error",
+	ErrDisabled:       "Disabled error",
 }

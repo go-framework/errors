@@ -16,6 +16,10 @@ func GetDetail(any interface{}) string {
 		return str
 	}
 
+	if any == nil{
+		return ""
+	}
+
 	return fmt.Sprintf("%v", any)
 }
 

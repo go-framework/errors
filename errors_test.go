@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"testing"
+
+	jsoniter "github.com/json-iterator/go"
 )
 
 func TestAppend(t *testing.T) {
@@ -65,4 +67,32 @@ func TestErrors(t *testing.T) {
 	var err error = errs
 
 	t.Log("error", err)
+}
+
+func TestJSON(t *testing.T) {
+	var errs Errors
+
+	//
+	// Errors
+	//
+
+	errs.Append(nil)
+	errs.Append(errors.New("go errors error"))
+	errs.Append(NewTextError("text error"))
+	errs.Append(NewTextError("text error \n separator"))
+	errs.Append(NewTextError("text error \t separator"))
+	errs.Append(NewTextError("text error \n\t separator"))
+	errs.Append(NewTextError("text error \t\n separator"))
+
+	var intCode IntCode = -1
+	errs.Append(intCode.WithDetail("IntCode"))
+
+	t.Log("Errors", errs)
+
+	str, err := jsoniter.MarshalToString(errs)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	t.Log(str)
 }

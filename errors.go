@@ -1,6 +1,7 @@
 package errors
 
 import (
+	"strconv"
 	"strings"
 )
 
@@ -21,11 +22,13 @@ func (errs Errors) Error() string {
 	buffer := strings.Builder{}
 
 	buffer.WriteString("error list:")
-	for _, item := range errs {
+	for idx, item := range errs {
 		if item == nil {
 			continue
 		}
 		buffer.WriteString("\n\t* ")
+		buffer.WriteString(strconv.Itoa(idx + 1))
+		buffer.WriteString(" ")
 		// replace \n \t
 		str := strings.Replace(item.Error(), "\t", "\t\t", -1)
 		str = strings.Replace(str, "\n", "\n\t\t", -1)
@@ -51,6 +54,7 @@ func (errs *Errors) Append(err ...error) {
 			*errs = append(*errs, t...)
 			continue
 		}
+
 		*errs = append(*errs, e)
 	}
 }

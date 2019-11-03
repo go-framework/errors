@@ -11,5 +11,8 @@ func (e *TextError) Error() string {
 
 // New returns an error that formats as the given text.
 func NewTextError(text string) error {
+	if len(text) == 0 {
+		return nil
+	}
 	return &TextError{Text: text}
 }
