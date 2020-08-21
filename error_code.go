@@ -12,7 +12,6 @@ import (
 
 // ErrorCode interface
 type ErrorCode interface {
-	error
 	GetCode() interface{}
 	GetMessage() string
 }
@@ -106,6 +105,11 @@ func (e *errorCode) Wrap(err error) error {
 		next:  e,
 	}
 	return _e
+}
+
+func (e *errorCode) SetError(err error) error {
+	e.error = err
+	return e
 }
 
 func (e *errorCode) GetCode() interface{} {

@@ -161,14 +161,14 @@ func TestNew(t *testing.T) {
 			args: args{
 				any: Succeed,
 			},
-			want: `{"code":0,"message":"succeed","error":"ok"}`,
+			want: `{"code":0,"message":"succeed"}`,
 		},
 		{
 			name: "stringErrCode",
 			args: args{
 				any: Failed,
 			},
-			want: `{"code":"failed","message":"failed","error":"failed error"}`,
+			want: `{"code":"failed","message":"failed"}`,
 		},
 		{
 			name: "errorCode",
@@ -229,16 +229,16 @@ func TestNew(t *testing.T) {
 					Name: "test",
 				},
 			},
-			want: `{"error":"{Name:test}"}`,
+			want: `{"message":"{Name:test}"}`,
 		},
 		{
-			name: "&structCode",
+			name: "structCode2",
 			args: args{
 				any: &structCode{
 					Name: "test",
 				},
 			},
-			want: `{"error":"{Name:test}"}`,
+			want: `{"message":"{Name:test}"}`,
 		},
 	}
 	for _, tt := range tests {

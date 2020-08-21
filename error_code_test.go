@@ -2,6 +2,7 @@ package errors
 
 import (
 	"errors"
+	"fmt"
 	"math"
 	"reflect"
 	"testing"
@@ -210,7 +211,7 @@ func Test_errorCode_Wrap(t *testing.T) {
 		name   string
 		fields fields
 		args   args
-		want   error
+		want   string
 	}{
 		{
 			name: "nil",
@@ -222,11 +223,7 @@ func Test_errorCode_Wrap(t *testing.T) {
 			args: args{
 				err: nil,
 			},
-			want: &errorCode{
-				code:    math.MaxInt64,
-				message: "failed",
-				error:   errors.New("unexpected"),
-			},
+			want: `{"code":9223372036854775807,"message":"failed","error":"unexpected"}`,
 		},
 		{
 			name: "errors",
@@ -238,32 +235,32 @@ func Test_errorCode_Wrap(t *testing.T) {
 			args: args{
 				err: errors.New("errors"),
 			},
-			want: nil,
+			want: `[{"error":"errors"},{"code":9223372036854775807,"message":"failed","error":"unexpected"}]`,
 		},
-		//{
-		//	name: "Errorf",
-		//	fields: fields{
-		//		code:    math.MaxInt64,
-		//		message: "failed",
-		//		error:   errors.New("unexpected"),
-		//	},
-		//	args: args{
-		//		err: fmt.Errorf("%s", "Errorf"),
-		//	},
-		//	want: nil,
-		//},
-		//{
-		//	name: "Errorf Wrap",
-		//	fields: fields{
-		//		code:    math.MaxInt64,
-		//		message: "failed",
-		//		error:   errors.New("unexpected"),
-		//	},
-		//	args: args{
-		//		err: fmt.Errorf("wrap %w", errors.New("errors")),
-		//	},
-		//	want: nil,
-		//},
+		{
+			name: "Errorf",
+			fields: fields{
+				code:    math.MaxInt64,
+				message: "failed",
+				error:   errors.New("unexpected"),
+			},
+			args: args{
+				err: fmt.Errorf("%s", "Errorf"),
+			},
+			want: `[{"error":"Errorf"},{"code":9223372036854775807,"message":"failed","error":"unexpected"}]`,
+		},
+		{
+			name: "Errorf Wrap",
+			fields: fields{
+				code:    math.MaxInt64,
+				message: "failed",
+				error:   errors.New("unexpected"),
+			},
+			args: args{
+				err: fmt.Errorf("wrap %w", errors.New("errors")),
+			},
+			want: `[{"error":"wrap errors"},{"code":9223372036854775807,"message":"failed","error":"unexpected"}]`,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -274,7 +271,7 @@ func Test_errorCode_Wrap(t *testing.T) {
 				next:    tt.fields.next,
 			}
 			got := e.Wrap(tt.args.err)
-			if !errors.Is(tt.want, got) {
+			if got.Error() != tt.want {
 				t.Errorf("Wrap() failed got = %v, want %v", got, tt.want)
 			}
 		})
