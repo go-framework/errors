@@ -3,156 +3,248 @@ package errors
 import (
 	"errors"
 	"fmt"
-	"reflect"
 	"testing"
-
-	jsoniter "github.com/json-iterator/go"
 )
 
-func TestAppend(t *testing.T) {
-	var errs error
-	t.Log(errs)
-
-	errs = Append(errs, fmt.Errorf("error 1"), fmt.Errorf("error 2"))
-	t.Log(errs)
-
-	errs = Append(errs, fmt.Errorf("error 3"), fmt.Errorf("error 4"))
-	t.Log(errs)
-
-	errs = fmt.Errorf("error 0")
-
-	t.Log(errs)
-	errs = Append(errs, fmt.Errorf("error 1"), fmt.Errorf("error 2"))
-	t.Log(errs)
-
-	errs = Append(errs, fmt.Errorf("error 3"), fmt.Errorf("error 4"))
-	t.Log(errs)
-
-	var errs2 error
-	t.Log(errs2)
-
-	errs2 = Append(errs2, errs)
-
-	t.Log(errs2)
-
-	errs2 = Append(errs2, errs)
-
-	t.Log(errs2)
+type intCode int
+type uintCode uint
+type stringCode string
+type structCode struct {
+	Name string
 }
+type intErrCode int
 
-func TestErrors(t *testing.T) {
-	var errs Errors
+const (
+	Succeed intErrCode = iota
+)
 
-	t.Log("Errors", errs)
-
-	//
-	// Errors
-	//
-
-	errs.Append(nil)
-	errs.Append(errors.New("go errors error"))
-	errs.Append(NewTextError("text error"))
-	errs.Append(NewTextError("text error \n separator"))
-	errs.Append(NewTextError("text error \t separator"))
-	errs.Append(NewTextError("text error \n\t separator"))
-	errs.Append(NewTextError("text error \t\n separator"))
-
-	var intCode IntCode = -1
-	errs.Append(intCode.WithDetail("IntCode"))
-
-	t.Log("Errors", errs)
-
-	//
-	// error
-	//
-	var err error = errs
-
-	t.Log("error", err)
-}
-
-func TestJSON(t *testing.T) {
-	var errs Errors
-
-	//
-	// Errors
-	//
-
-	errs.Append(nil)
-	errs.Append(errors.New("go errors error"))
-	errs.Append(NewTextError("test error"))
-	errs.Append(NewTextError("test error \n separator"))
-	errs.Append(NewTextError("test error \t separator"))
-	errs.Append(NewTextError("test error \n\t separator"))
-	errs.Append(NewTextError("test error \t\n separator"))
-
-	var intCode IntCode = -1
-	errs.Append(intCode.WithDetail("IntCode"))
-
-	t.Log("Errors", errs)
-
-	str, err := jsoniter.MarshalToString(errs)
-	if err != nil {
-		t.Fatal(err)
+func (i intErrCode) String() string {
+	switch i {
+	case Succeed:
+		return "succeed"
+	default:
+		return fmt.Sprintf("%d", i)
 	}
-
-	t.Log(str)
 }
 
-func TestErrors_MarshalJSON(t *testing.T) {
+func (i intErrCode) GetCode() interface{} {
+	return i
+}
 
+func (i intErrCode) GetMessage() string {
+	return i.String()
+}
+func (i intErrCode) Error() string {
+	switch i {
+	case Succeed:
+		return "ok"
+	default:
+		return fmt.Sprintf("intErrCode(%d)", i)
+	}
+}
+
+type stringErrCode string
+
+const (
+	Failed stringErrCode = "failed"
+)
+
+func (i stringErrCode) String() string {
+	return string(i)
+}
+
+func (i stringErrCode) GetCode() interface{} {
+	return i
+}
+
+func (i stringErrCode) GetMessage() string {
+	return i.String()
+}
+func (i stringErrCode) Error() string {
+	switch i {
+	case Failed:
+		return "failed error"
+	default:
+		return fmt.Sprintf("stringErr(%s)", i)
+	}
+}
+
+func TestNew(t *testing.T) {
+
+	type args struct {
+		any interface{}
+	}
 	tests := []struct {
-		name    string
-		errs    Errors
-		want    []byte
-		wantErr bool
+		name string
+		args args
+		want string
 	}{
 		{
-			name:    "empty string",
-			errs:    []error{nil},
-			want:    []byte("[null]"),
-			wantErr: false,
+			name: "string",
+			args: args{
+				any: "string",
+			},
+			want: `{"message":"string"}`,
 		},
 		{
-			name: "normal",
-			errs: []error{
-				errors.New("go error"),
-				NewTextError("text error"),
+			name: "int",
+			args: args{
+				any: int(0),
 			},
-			want:    []byte(`[{"error":"go error"},{"error":"text error"}]`),
-			wantErr: false,
+			want: `{"code":0}`,
 		},
 		{
-			name: "newline tab",
-			errs: []error{
-				errors.New("test newline \n\t error"),
-				NewTextError("test newline \n\t error"),
+			name: "int8",
+			args: args{
+				any: int8(0),
 			},
-			want:    []byte(`[{"error":"test newline \n\t error"},{"error":"test newline \n\t error"}]`),
-			wantErr: false,
+			want: `{"code":0}`,
 		},
 		{
-			name: "int code error",
-			errs: []error{
-				IntCode(-1).WithDetail("-1"),
-				IntCode(-2).WithDetail("newline \n error"),
-				IntCode(-3).WithDetail("tab \t error"),
-				IntCode(-4).WithDetail("tab newline \t\n error"),
+			name: "int16",
+			args: args{
+				any: int16(0),
 			},
-			want:    []byte(`[{"code":-1,"detail":"-1"},{"code":-2,"detail":"newline \n error"},{"code":-3,"detail":"tab \t error"},{"code":-4,"detail":"tab newline \t\n error"}]`),
-			wantErr: false,
+			want: `{"code":0}`,
+		},
+		{
+			name: "int32",
+			args: args{
+				any: int32(0),
+			},
+			want: `{"code":0}`,
+		},
+		{
+			name: "int64",
+			args: args{
+				any: int64(0),
+			},
+			want: `{"code":0}`,
+		},
+		{
+			name: "uint",
+			args: args{
+				any: uint(0),
+			},
+			want: `{"code":0}`,
+		},
+		{
+			name: "uint8",
+			args: args{
+				any: uint8(0),
+			},
+			want: `{"code":0}`,
+		},
+		{
+			name: "uint16",
+			args: args{
+				any: uint16(0),
+			},
+			want: `{"code":0}`,
+		},
+		{
+			name: "uint32",
+			args: args{
+				any: uint32(0),
+			},
+			want: `{"code":0}`,
+		},
+		{
+			name: "uint64",
+			args: args{
+				any: uint64(0),
+			},
+			want: `{"code":0}`,
+		},
+		{
+			name: "intErrCode",
+			args: args{
+				any: Succeed,
+			},
+			want: `{"code":0,"message":"succeed","error":"ok"}`,
+		},
+		{
+			name: "stringErrCode",
+			args: args{
+				any: Failed,
+			},
+			want: `{"code":"failed","message":"failed","error":"failed error"}`,
+		},
+		{
+			name: "errorCode",
+			args: args{
+				any: &errorCode{
+					code:    1,
+					message: "2",
+					error:   nil,
+					next:    nil,
+				},
+			},
+			want: `{"code":1,"message":"2"}`,
+		},
+		{
+			name: "errorCode2",
+			args: args{
+				any: &errorCode{
+					code:    1,
+					message: "2",
+					error:   errors.New("3"),
+					next:    nil,
+				},
+			},
+			want: `{"code":1,"message":"2","error":"3"}`,
+		},
+		{
+			name: "error",
+			args: args{
+				any: errors.New("errors"),
+			},
+			want: `{"error":"errors"}`,
+		},
+		{
+			name: "intCode",
+			args: args{
+				any: intCode(-1),
+			},
+			want: `{"code":-1}`,
+		},
+		{
+			name: "uintCode",
+			args: args{
+				any: uintCode(1),
+			},
+			want: `{"code":1}`,
+		},
+		{
+			name: "stringCode",
+			args: args{
+				any: stringCode("stringCode"),
+			},
+			want: `{"message":"stringCode"}`,
+		},
+		{
+			name: "structCode",
+			args: args{
+				any: structCode{
+					Name: "test",
+				},
+			},
+			want: `{"error":"{Name:test}"}`,
+		},
+		{
+			name: "&structCode",
+			args: args{
+				any: &structCode{
+					Name: "test",
+				},
+			},
+			want: `{"error":"{Name:test}"}`,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := jsoniter.Marshal(tt.errs)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("MarshalJSON() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("MarshalJSON() got = %v, want %v", string(got), string(tt.want))
-			} else {
-				t.Logf("MarshalJSON() got = %v", string(got))
+			if got := New(tt.args.any); got.Error() != tt.want {
+				t.Errorf("New() got = %v, want %v", got, tt.want)
 			}
 		})
 	}

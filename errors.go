@@ -1,129 +1,41 @@
 package errors
 
 import (
-	"bytes"
-	"strconv"
-	"strings"
-
-	jsoniter "github.com/json-iterator/go"
+	"fmt"
+	"reflect"
 )
 
-// Error list.
-type Errors []error
-
-// New Errors.
-func NewErrors() Errors {
-	return make([]error, 0)
+type Error interface {
+	error
+	Is(err error) bool
+	As(target interface{}) bool
+	Wrap(err error) error
+	Unwrap() error
 }
 
-// Implement error interface, '\n' is separator error list.
-func (errs Errors) Error() string {
-	if len(errs) == 0 {
-		return "<nil>"
-	}
-
-	buffer := strings.Builder{}
-
-	buffer.WriteString("error list:")
-	for idx, item := range errs {
-		if item == nil {
-			continue
-		}
-		buffer.WriteString("\n\t* ")
-		buffer.WriteString(strconv.Itoa(idx + 1))
-		buffer.WriteString(" ")
-		// replace \n \t
-		str := strings.Replace(item.Error(), "\t", "\t\t", -1)
-		str = strings.Replace(str, "\n", "\n\t\t", -1)
-		buffer.WriteString(str)
-	}
-
-	return buffer.String()
-}
-
-// Append multiple error.
-// ignore nil error.
-func (errs *Errors) Append(err ...error) {
-	if len(err) == 0 {
-		return
-	}
-
-	for _, e := range err {
-		if e == nil {
-			continue
-		}
-		// is self type?
-		if t, ok := e.(Errors); ok {
-			*errs = append(*errs, t...)
-			continue
-		}
-
-		*errs = append(*errs, e)
-	}
-}
-
-// Errors is nil error.
-func (errs Errors) Nil() error {
-	if len(errs) == 0 {
-		return nil
-	}
-
-	return errs
-}
-
-// Marshal JSON
-func (errs Errors) MarshalJSON() ([]byte, error) {
-	// new buffer
-	buffer := &bytes.Buffer{}
-
-	buffer.WriteByte('[')
-
-	// get length
-	n := len(errs)
-
-	// loop
-	for idx, e := range errs {
-		// check is sdk error
-		if IsSDKError(e) {
-			e = NewTextError(e.Error())
-		}
-
-		// marshal error
-		data, err := jsoniter.Marshal(e)
-		if err != nil {
-			return nil, err
-		}
-
-		// write error data
-		buffer.Write(data)
-		if idx < n-1 {
-			buffer.WriteByte(',')
-		}
-	}
-
-	buffer.WriteByte(']')
-
-	return buffer.Bytes(), nil
-}
-
-// Append multiple error err to the end of error errs.
-func Append(e error, err ...error) error {
-	// append a empty error list, return e.
-	if len(err) == 0 {
-		return e
-	}
-
-	// switch error type.
-	switch t := e.(type) {
-	case Errors:
-		t.Append(err...)
-		return t
+func New(any interface{}) Error {
+	switch e := any.(type) {
+	case string:
+		return NewMessage(e)
+	case int, int8, int16, int32, int64:
+		return NewCode(iToInt64(e))
+	case uint, uint8, uint16, uint32, uint64:
+		return NewCode(iToUint64(e))
+	case *errorCode:
+		return NewErrorCode(e.code, e.message, e.error)
+	case ErrorCode:
+		return NewErrorCode(e.GetCode(), e.GetMessage(), e)
+	case error:
+		return NewError(e)
 	default:
-		errs := NewErrors()
-
-		errs.Append(e)
-		errs.Append(err...)
-
-		return errs
+		switch reflect.TypeOf(any).Kind() {
+		case reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64, reflect.Int:
+			return NewCode(iToInt64(any))
+		case reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uint:
+			return NewCode(iToUint64(any))
+		case reflect.String:
+			return NewMessage(reflect.ValueOf(any).String())
+		}
 	}
+	return NewMessage(fmt.Sprintf("%+v", any))
 }
