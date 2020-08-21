@@ -2,6 +2,7 @@ package errors
 
 import (
 	"fmt"
+	"math"
 	"reflect"
 )
 
@@ -40,4 +41,53 @@ func New(any interface{}) Error {
 		}
 	}
 	return NewMessage(fmt.Sprintf("%+v", any))
+}
+
+func GetIntCode(err error) int64 {
+	switch e := err.(type) {
+	case *errorCode:
+		return iToInt64(e.code)
+	case ErrorCode:
+		return iToInt64(e.GetCode())
+	default:
+		return math.MaxInt64
+	}
+}
+
+func GetUintCode(err error) uint64 {
+	switch e := err.(type) {
+	case *errorCode:
+		return iToUint64(e.code)
+	case ErrorCode:
+		return iToUint64(e.GetCode())
+	default:
+		return math.MaxUint64
+	}
+}
+
+func GetStringCode(err error) string {
+	switch e := err.(type) {
+	case *errorCode:
+		str, ok := e.code.(string)
+		if ok {
+			return str
+		}
+	case ErrorCode:
+		str := iToString(e.GetCode())
+		if len(str) > 0 {
+			return str
+		}
+	}
+	return err.Error()
+}
+
+func GetMessage(err error) string {
+	switch e := err.(type) {
+	case *errorCode:
+		return e.message
+	case ErrorCode:
+		return e.GetMessage()
+	default:
+		return e.Error()
+	}
 }

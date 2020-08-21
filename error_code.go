@@ -10,12 +10,6 @@ import (
 	"unsafe"
 )
 
-// ErrorCode interface
-type ErrorCode interface {
-	GetCode() interface{}
-	GetMessage() string
-}
-
 // errorCode is a implementation of error.
 type errorCode struct {
 	code    interface{}

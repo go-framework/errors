@@ -50,3 +50,18 @@ func iToUint64(ui interface{}) uint64 {
 
 	return math.MaxUint64
 }
+
+// convert i to string. when i is other type then return empty string.
+func iToString(i interface{}) string {
+	switch v := i.(type) {
+	case string:
+		return v
+	}
+
+	switch reflect.TypeOf(i).Kind() {
+	case reflect.String:
+		return reflect.ValueOf(i).String()
+	}
+
+	return ""
+}
