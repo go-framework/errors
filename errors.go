@@ -24,7 +24,8 @@ func New(any interface{}) Error {
 	case *errorCode:
 		return NewErrorCode(e.code, e.message, e.error)
 	case ErrorCode:
-		return NewErrorCode(e.GetCode(), e.GetMessage(), nil)
+		err, _ := any.(error)
+		return NewErrorCode(e.GetCode(), e.GetMessage(), err)
 	case error:
 		return NewError(e)
 	default:
