@@ -11,6 +11,7 @@ type Error interface {
 	As(target interface{}) bool
 	Wrap(err error) error
 	Unwrap() error
+	SetError(err error) error
 }
 
 func New(any interface{}) Error {
