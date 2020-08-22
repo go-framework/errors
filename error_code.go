@@ -203,6 +203,10 @@ func (e *errorCode) marshalJSON() ([]byte, error) {
 
 	buf.WriteString(`}`)
 
+	if bytes.Contains(buf.Bytes(), []byte("\n")) {
+		return bytes.ReplaceAll(buf.Bytes(), []byte("\n"), []byte("\\n")), nil
+	}
+
 	return buf.Bytes(), nil
 }
 
