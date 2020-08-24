@@ -23,6 +23,27 @@ func New(any interface{}) Error {
 		return NewCode(iToInt64(e))
 	case uint, uint8, uint16, uint32, uint64:
 		return NewCode(iToUint64(e))
+	case IntErrCode:
+		i, ok := any.(ErrorCode)
+		if ok {
+			err, _ := any.(error)
+			return NewErrorCode(i.GetCode(), i.GetMessage(), err)
+		}
+		return NewCode(int(e))
+	case UintErrCode:
+		i, ok := any.(ErrorCode)
+		if ok {
+			err, _ := any.(error)
+			return NewErrorCode(i.GetCode(), i.GetMessage(), err)
+		}
+		return NewCode(uint(e))
+	case StringErrCode:
+		i, ok := any.(ErrorCode)
+		if ok {
+			err, _ := any.(error)
+			return NewErrorCode(i.GetCode(), i.GetMessage(), err)
+		}
+		return NewMessage(string(e))
 	case *errorCode:
 		return NewErrorCode(e.code, e.message, e.error)
 	case ErrorCode:
